@@ -3,18 +3,22 @@
 Created by:emon100
 通用图灵机
  */
-/*
-我现在想做的内容：
-    图灵机储存规则
-    运行的一个循环，读头获得纸带内容，给到图灵机，图灵机将操作给到读头，读头操作纸带。
- */
 
 /*
-测试把所有的1换成0，把所有的0换成1，遇到B之后回去把左边所有符号换成w
+我做的内容：
+    图灵机储存规则
+    运行一个循环，读头获得纸带内容，给到图灵机，图灵机将操作给到读头，读头操作纸带。
+*/
+
+/*
+尝试使用 MVC 模式：
+model : 纸带tape，读头head，规则表ruleTable
+view : 整个网页
+controller : 通过网页上的按钮应用各种函数，对model进行改变，再用updateView函数通知view刷新。
  */
 
 let app = {
-    tape : ['B','B'],//model
+    tape : ['B','B'],
     head : {
         index : 1,
         currentState : null,
@@ -47,7 +51,7 @@ let app = {
     },
 
     setPreset1(){//预设1：计算按位取反
-        this.ruleTable.initial = "q0";
+        this.ruleTable.initial = this.head.currentState = "q0";//TODO
         this.ruleTable.final = "q1";
         this.tape=['B','0','0','1','1','0','0','1','1','0','B'];
 
@@ -56,7 +60,7 @@ let app = {
         this.ruleTable.putState("q0",'B',"q1","B",0);
         },
     setPreset2(){//预设2：计算一进制m-n
-        this.ruleTable.initial = "q0";
+        this.ruleTable.initial = this.head.currentState =  "q0";
         this.ruleTable.final = "q6";
         this.tape=['B','0','0','0','0','0','1','0','0','B'];
 
@@ -80,9 +84,9 @@ let app = {
 
     /*开始的函数*/
     start() {
-        this.initAll();
-        this.setPreset1();
-        this.updateView();
+        this.initAll();//将所有值置空
+        this.setPreset1();//设置预设1
+        this.updateView();//更新dom
     },
     initAll(){
         this.head.init();
@@ -107,7 +111,7 @@ let app = {
         let statesList = $("#states-list");
         statesList.empty();
         let ol2 = document.createElement("ol");
-        ol2.innerText="初始状态:"+(this.ruleTable.initial?"为空":ruleTable.initial)+"\n结束状态:"+(this.ruleTable.final==null?"为空":this.ruleTable.final);
+        ol2.innerText="初始状态:"+(this.ruleTable.initial == null?"为空":this.ruleTable.initial)+"\n结束状态:"+(this.ruleTable.final==null?"为空":this.ruleTable.final);
         statesList.append(ol2);
         this.ruleTable.states.forEach((v,k) => {
             let f = function (value, key){
